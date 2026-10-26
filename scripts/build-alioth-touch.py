@@ -124,10 +124,23 @@ archive = OUT / "libNativeAliothTouch.a"
 archive.unlink(missing_ok=True)
 run(["xcrun", "ar", "rcs", archive, *objs])
 
+def report_path(p):
+    """Relative path for the build report. The kit files live under DEVICE and the
+    HID consumer under ROOT, so no single base covers both; try each ancestor."""
+    for base in (ROOT.parent, ROOT, DEVICE, DEVICE.parent):
+        try:
+            return str(p.relative_to(base))
+        except ValueError:
+            continue
+    return str(p)
+
+sources = [touch_cpp, *c_sources]
+if has_hid:
+    sources.insert(1, hid / "NativeHidInput.cpp")
+
 (OUT / "build-report.json").write_text(json.dumps({
     "archive": str(archive),
     "objects": [str(o) for o in objs],
-    "source_sha256": {str(p.relative_to(ROOT.parent if p.is_relative_to(ROOT.parent) else ROOT)): sha(p)
-                      for p in [touch_cpp, hid / "NativeHidInput.cpp", *c_sources]},
+    "source_sha256": {report_path(p): sha(p) for p in sources},
 }, indent=2) + "\n")
 print(f"Built {archive} ({len(objs)} objects); merge into the kernel prelink (see kits/alioth-touch/README.md)")
