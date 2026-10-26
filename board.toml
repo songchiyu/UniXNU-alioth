@@ -47,6 +47,9 @@ archives = [
   "build-mockfs-fixture.py",
   "build-platform-power.py",
   "build-verified-root-stub.py",
+  # NativeUfsBlock subclasses IOBlockStorageDevice and publishes IOMedia, so the kernel
+  # link needs the real IOStorageFamily classes rather than only its headers.
+  "build-iostoragefamily.py",
   # Ported for stage 4: reads the device package (kits/<kit>) and this board's
   # Mu-Silicium checkout instead of kits/sheng and uefi-sheng.
   "build-boot-progress.py",
