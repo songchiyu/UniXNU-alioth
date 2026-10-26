@@ -172,8 +172,12 @@ void touchThread(void *arg, wait_result_t) {
 
 } // namespace
 
+// File-scope static: kernel C++ has no support for function-local static
+// guard variables, so the persistent Session lives at module scope.
+static Session gTouchSession;
+
 bool touchProbeStart(void) {
-    static Session s;
+    Session &s = gTouchSession;
     // GCC: AHB halts at 0x17000, SE4 halt+RCG at 0x17400, core halts at 0x23000,
     // clock vote at 0x52000.
     if (!mapRegion(TB_GCC_BASE + 0x17000, 0x100, s.gccAhb) ||
