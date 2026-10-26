@@ -24,7 +24,10 @@ CONFIG_XNU_DT_PANIC_REGION=y
 # hash table and key come from the unchanged original OS image.
 CONFIG_XNU_VERIFIED_ROOT_PROBE=y
 CONFIG_XNU_BUILD_ARCHIVES=y
-CONFIG_XNU_EXTRA_LD_ARCHIVES="{tree}/build/link-stubs/libLinkStubs.a {tree}/build/alioth-touch/libNativeAliothTouch.a"
+# The verified-root archive carries the signed policy and key, not the IOKit classes the
+# block half subclasses: IOBlockStorageDevice and IOMedia come from the public
+# IOStorageFamily sources, which build-iostoragefamily.py compiles into this archive.
+CONFIG_XNU_EXTRA_LD_ARCHIVES="{tree}/build/link-stubs/libLinkStubs.a {tree}/build/alioth-touch/libNativeAliothTouch.a {tree}/build/iostoragefamily/libIOStorageFamily.a"
 # The A650 GPU path is not provided by a catalog component yet.
 # CONFIG_XNU_NATIVE_ADRENO is not set
 # CONFIG_XNU_NATIVE_MOBILE_DISPLAY is not set
