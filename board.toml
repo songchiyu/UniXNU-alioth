@@ -46,6 +46,7 @@ archives = [
   # archive builds that library, so it must stay in the list.
   "build-mockfs-fixture.py",
   "build-platform-power.py",
+  "build-verified-root-stub.py",
   # Ported for stage 4: reads the device package (kits/<kit>) and this board's
   # Mu-Silicium checkout instead of kits/sheng and uefi-sheng.
   "build-boot-progress.py",
