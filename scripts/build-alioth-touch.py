@@ -38,10 +38,11 @@ def code(data, macho_):
 def sha(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
-# HID consumer: NativeHidInput.cpp from the ShengHidInput driver feed.
+# HID consumer: NativeHidInput.cpp from the ShengHidInput driver feed. When the
+# feed is absent (public compile check) the probe alone is still built: it only
+# needs the HID consumer at link time, which the port's own build provides.
 hid = ROOT / "drivers" / "ShengHidInput"
-require((hid / "NativeHidInput.cpp").exists(),
-        "ShengHidInput feed missing: add the UniXNU/ShengHidInput driver source to feeds.toml")
+has_hid = (hid / "NativeHidInput.cpp").exists()
 
 # Compile-command templates from the kernel build (both live under build/xnu/ios-obj).
 ios = ROOT / "build" / "xnu" / "ios-obj"
@@ -96,19 +97,23 @@ def c_cmd(source, obj, json_path, extra_inc=None):
         cmd += ["-I" + str(p) for p in extra_inc]
     return cmd, r["directory"]
 
-inc = [KIT, ROOT / "drivers" / "QcomGeniSpi", hid]
+inc = [KIT, ROOT / "drivers" / "QcomGeniSpi"]
+if has_hid:
+    inc.append(hid)
 
 touch_cpp = KIT / "FocalTouchProbe.cpp"
 touch_obj = OUT / "FocalTouchProbe.o"
 cmd, cwd = cpp_cmd(touch_cpp, touch_obj, expert, inc)
 run(cmd, cwd=cwd)
 
-hid_obj = OUT / "NativeHidInput.o"
-cmd, cwd = cpp_cmd(hid / "NativeHidInput.cpp", hid_obj, expert, inc)
-run(cmd, cwd=cwd)
+objs = [touch_obj]
+if has_hid:
+    hid_obj = OUT / "NativeHidInput.o"
+    cmd, cwd = cpp_cmd(hid / "NativeHidInput.cpp", hid_obj, expert, inc)
+    run(cmd, cwd=cwd)
+    objs.append(hid_obj)
 
 c_sources = [KIT / "FocalTouchProtocol.c", ROOT / "drivers" / "QcomGeniSpi" / "GeniSpi.c"]
-objs = [touch_obj, hid_obj]
 for src in c_sources:
     obj = OUT / (src.stem + ".o")
     objs.append(obj)
