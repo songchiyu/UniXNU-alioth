@@ -97,7 +97,7 @@ def c_cmd(source, obj, json_path, extra_inc=None):
         cmd += ["-I" + str(p) for p in extra_inc]
     return cmd, r["directory"]
 
-inc = [KIT, ROOT / "drivers" / "QcomGeniSpi"]
+inc = [KIT]
 if has_hid:
     inc.append(hid)
 
@@ -113,7 +113,7 @@ if has_hid:
     run(cmd, cwd=cwd)
     objs.append(hid_obj)
 
-c_sources = [KIT / "FocalTouchProtocol.c", ROOT / "drivers" / "QcomGeniSpi" / "GeniSpi.c"]
+c_sources = [KIT / "FocalTouchProtocol.c", KIT / "GeniSpi.c"]
 for src in c_sources:
     obj = OUT / (src.stem + ".o")
     objs.append(obj)
