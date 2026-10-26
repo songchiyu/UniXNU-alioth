@@ -102,9 +102,8 @@ void gpioReset(Session &s, int asserted) {
     wr32(cfg, 4, asserted ? 0u : TB_IO_OUT);                          // low asserted (active-low reset)
 }
 
-int panelReset(void *ctx, int asserted) {
+void panelReset(void *ctx, int asserted) {
     gpioReset(*static_cast<Session *>(ctx), asserted);
-    return 0;
 }
 int panelTransfer(void *ctx, const uint8_t *tx, uint8_t *rx, size_t len) {
     Session &s = *static_cast<Session *>(ctx);
