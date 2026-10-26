@@ -22,9 +22,20 @@ volatile uint32_t native_touch_count;
 volatile int native_touch_xs[12], native_touch_ys[12], native_touch_ids[12];
 volatile int native_touch_last_x = -1, native_touch_last_y = -1;
 volatile uint32_t native_touch_frames;
+volatile uint32_t native_touch_hid_reports;
 volatile int native_touch_error;
 volatile uint32_t native_touch_loop_step;
 volatile uint32_t native_touch_valid;
+// Consumer-side accounting that the HID digitizer (NativeHidInput) maintains;
+// defined here so the probe archive alone satisfies the digitizer's link.
+volatile uint32_t native_touch_edge_stats[4];
+volatile uint32_t native_touch_hid_multi[3];
+}
+
+extern "C" bool native_hid_input_requested(void) {
+    // The HID digitizer is always wanted on this board: the FT5652 is the only
+    // touch input, and the consumer is force-linked with the probe archive.
+    return true;
 }
 
 extern "C" {

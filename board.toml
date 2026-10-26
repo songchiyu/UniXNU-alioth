@@ -49,6 +49,7 @@ archives = [
   # Ported for stage 4: reads the device package (kits/<kit>) and this board's
   # Mu-Silicium checkout instead of kits/sheng and uefi-sheng.
   "build-boot-progress.py",
+  "build-alioth-touch.py",
   "build-link-stubs.py",
   "build-libpthread-kernel.py",
   "component:AppleKeyStoreState",
